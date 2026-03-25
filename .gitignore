@@ -1,0 +1,35 @@
+# ───── Données & modèles (gérés par DVC) ─────
+data/raw/
+data/processed/
+models/
+
+# ───── Secrets ─────
+.env
+.env.*           # couvre .env.local, .env.production, etc.
+
+# ───── Python ─────
+__pycache__/
+*.py[cod]        # .pyc, .pyo, .pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ───── Environnements virtuels ─────
+venv/
+.venv/
+env/
+
+# ───── MLflow ─────
+mlruns/          # généré localement par MLflow — chaque dev a le sien
+mlartifacts/
+
+# ───── Jupyter ─────
+.ipynb_checkpoints/   # sauvegardes auto des notebooks, inutiles
+
+# ───── OS ─────
+.DS_Store        # fichier macOS caché
+Thumbs.db        # fichier Windows caché
+
+# ───── Notes ─────
+notes.md           # fichier pour mes notes personnelles

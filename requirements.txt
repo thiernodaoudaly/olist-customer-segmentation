@@ -1,0 +1,33 @@
+# ───── Données & exploration ─────
+numpy==1.26.4
+pandas==2.2.1
+scipy==1.13.0
+
+# ───── Visualisation ─────
+matplotlib==3.8.4
+seaborn==0.13.2
+plotly==5.22.0          # graphiques interactifs pour l'EDA
+
+# ───── ML & clustering ─────
+scikit-learn==1.4.2
+umap-learn==0.5.6       # réduction de dimension (meilleur que PCA pour visualiser les clusters)
+
+# ───── Tracking MLflow ─────
+mlflow==2.13.0           # tracking des expériences, registry des modèles
+
+# ───── Pipeline & versioning données ─────
+dvc==3.51.1              # versioning des données et des modèles
+
+# ───── API ─────
+fastapi==0.111.0         # création de l'API REST
+uvicorn==0.29.0          # serveur ASGI pour lancer FastAPI
+pydantic==2.7.1          # validation des données entrantes dans l'API
+
+# ───── Qualité de code ─────
+black==24.4.2            # formatage automatique
+flake8==7.0.0            # linting PEP8
+isort==5.13.2            # tri automatique des imports
+
+# ───── Tests ─────
+pytest==8.2.0
+pytest-cov==5.0.0        # mesure la couverture de code des tests

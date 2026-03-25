@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+
+  # ── API de segmentation ──────────────────────────────────────
+  api:
+    build: .
+    ports:
+      - "8000:8000"         # localhost:8000 → container:8000
+    volumes:
+      - ./data:/app/data    # monte les données locales dans le container
+      - ./models:/app/models
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    depends_on:
+      - mlflow              # attend que MLflow soit démarré
+
+  # ── Serveur MLflow ───────────────────────────────────────────
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.13.0
+    ports:
+      - "5000:5000"         # UI MLflow accessible sur localhost:5000
+    volumes:
+      - ./mlruns:/mlflow    # persiste les runs MLflow localement
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri /mlflow
+      --default-artifact-root /mlflow/artifacts
