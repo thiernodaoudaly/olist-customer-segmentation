@@ -9,10 +9,12 @@
 > à l'équipe marketing de personnaliser ses campagnes de communication
 > selon le profil comportemental de chaque groupe de clients.
 
-![Python](https://img.shields.io/badge/Python-3.9-blue)
-![MLflow](https://img.shields.io/badge/MLflow-2.13-orange)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.111-green)
-![CI/CD](https://github.com/thiernodaoudaly/olist-customer-segmentation/actions/workflows/ci.yml/badge.svg)
+<div align="center">
+    ![Python](https://img.shields.io/badge/Python-3.9-blue)
+    ![MLflow](https://img.shields.io/badge/MLflow-2.13-orange)
+    ![FastAPI](https://img.shields.io/badge/FastAPI-0.111-green)
+    ![CI/CD](https://github.com/thiernodaoudaly/olist-customer-segmentation/actions/workflows/ci.yml/badge.svg)
+<div>
 
 ---
 
