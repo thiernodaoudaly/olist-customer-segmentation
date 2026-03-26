@@ -1,6 +1,6 @@
 # ── Image de base ──────────────────────────────────────────────
-# python:3.9-slim = Python 3.9 sur Debian minimal (~50Mo vs ~900Mo pour python:3.9)
-FROM python:3.9-slim
+# python:3.13-slim = Python 3.13 sur Debian minimal (~50Mo vs ~900Mo pour python:3.13)
+FROM python:3.13-slim
 
 # ── Métadonnées ────────────────────────────────────────────────
 LABEL maintainer="Thierno Daouda LY"

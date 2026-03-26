@@ -1,33 +1,38 @@
 # ───── Données & exploration ─────
-numpy==1.26.4
-pandas==2.2.1
-scipy==1.13.0
+numpy>=1.26.4
+pandas>=2.2.1
+scipy>=1.13.0
 
 # ───── Visualisation ─────
-matplotlib==3.8.4
-seaborn==0.13.2
-plotly==5.22.0          # graphiques interactifs pour l'EDA
+matplotlib>=3.8.4
+seaborn>=0.13.2
+plotly>=5.22.0
 
 # ───── ML & clustering ─────
-scikit-learn==1.4.2
-umap-learn==0.5.6       # réduction de dimension (meilleur que PCA pour visualiser les clusters)
+scikit-learn>=1.4.2
+# umap-learn : pas de wheel stable Python 3.13
+# on installe via --pre si besoin, commenté pour l'instant
+# umap-learn>=0.5.6
 
 # ───── Tracking MLflow ─────
-mlflow==2.13.0           # tracking des expériences, registry des modèles
+mlflow>=2.14.0          # 2.14+ a le support Python 3.13
 
 # ───── Pipeline & versioning données ─────
-dvc==3.51.1              # versioning des données et des modèles
+dvc>=3.55.0             # version avec support 3.13
 
 # ───── API ─────
-fastapi==0.111.0         # création de l'API REST
-uvicorn==0.29.0          # serveur ASGI pour lancer FastAPI
-pydantic==2.7.1          # validation des données entrantes dans l'API
+fastapi>=0.111.0
+uvicorn>=0.29.0
+pydantic>=2.7.1
 
 # ───── Qualité de code ─────
-black==24.4.2            # formatage automatique
-flake8==7.0.0            # linting PEP8
-isort==5.13.2            # tri automatique des imports
+black>=24.4.2
+flake8>=7.0.0
+isort>=5.13.2
 
 # ───── Tests ─────
-pytest==8.2.0
-pytest-cov==5.0.0        # mesure la couverture de code des tests
+pytest>=8.2.0
+pytest-cov>=5.0.0
+
+# ───── Packaging ─────
+packaging>=24.0         # nécessaire pour check_env.py

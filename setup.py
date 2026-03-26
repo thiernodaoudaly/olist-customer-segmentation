@@ -6,6 +6,6 @@ setup(
     author="Thierno Daouda LY",              
     description="Segmentation des clients de Olist",       
     packages=find_packages(),   # trouve automatiquement tous les packages (dossiers avec __init__.py). On n'a pas à lister src, src.data, src.features... à la main.
-    python_requires=">=3.9",
+    python_requires=">=3.13",  # nécessite Python 3.13 ou supérieur
     install_requires=[],    
 )
