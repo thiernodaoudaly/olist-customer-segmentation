@@ -3,9 +3,9 @@ line-length = 88
 target-version = ["py313"]
 
 [tool.flake8]
-max-line-length = 88
-exclude = [".git", "__pycache__", "notebooks"]
-extend-ignore = ["E203"]
+max-line-length = 88        # ← même valeur que Black
+exclude = [".git", "__pycache__", "notebooks", "venv"]
+extend-ignore = ["E203"]    # E203 incompatible avec Black
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -8,15 +8,17 @@ def test_python_works():
 
 def test_imports_work():
     """Les packages essentiels sont importables."""
-    import pandas as pd
-    import numpy as np
-    import sklearn
-    assert True
+    import importlib
+
+    assert importlib.util.find_spec("pandas") is not None
+    assert importlib.util.find_spec("numpy") is not None
+    assert importlib.util.find_spec("sklearn") is not None
 
 
 def test_src_importable():
     """Le package src/ est bien installé."""
     from src.data.load_data import load_olist
     from src.features.build_features import build_features
+
     assert callable(load_olist)
     assert callable(build_features)
