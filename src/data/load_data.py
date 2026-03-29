@@ -9,9 +9,9 @@ Usage :
     dfs = load_olist()
     orders = dfs["orders"]
 """
+
 import os
 import pandas as pd
-
 
 # ── Constantes ────────────────────────────────────────────────────────────────
 
@@ -26,6 +26,7 @@ REQUIRED_FILES = [
 
 
 # ── Fonction principale ───────────────────────────────────────────────────────
+
 
 def load_olist(data_dir: str = "data/raw") -> dict[str, pd.DataFrame]:
     """
@@ -86,6 +87,7 @@ def load_olist(data_dir: str = "data/raw") -> dict[str, pd.DataFrame]:
 
 # ── Fonction utilitaire ───────────────────────────────────────────────────────
 
+
 def get_merged_dataset(data_dir: str = "data/raw") -> pd.DataFrame:
     """
     Charge et merge toutes les tables en un seul DataFrame.
@@ -113,11 +115,7 @@ def get_merged_dataset(data_dir: str = "data/raw") -> pd.DataFrame:
     print("\nMerge des tables...")
 
     # orders -> order_items
-    df = dfs["orders"].merge(
-        dfs["order_items"],
-        on="order_id",
-        how="left"
-    )
+    df = dfs["orders"].merge(dfs["order_items"], on="order_id", how="left")
     print(f"  orders + order_items     : {df.shape}")
 
     # -> order_payments (agrege par order_id pour eviter les doublons)
@@ -145,11 +143,7 @@ def get_merged_dataset(data_dir: str = "data/raw") -> pd.DataFrame:
     print(f"  + order_reviews          : {df.shape}")
 
     # -> customers
-    df = df.merge(
-        dfs["customers"],
-        on="customer_id",
-        how="left"
-    )
+    df = df.merge(dfs["customers"], on="customer_id", how="left")
     print(f"  + customers              : {df.shape}")
 
     print(f"\nDataset merge final     : {df.shape}")

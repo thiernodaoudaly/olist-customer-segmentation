@@ -3,9 +3,9 @@ Tests unitaires pour src/features/build_features.py
 
 On teste chaque fonction de feature engineering indépendamment.
 """
+
 import pytest
 import pandas as pd
-import numpy as np
 
 from src.features.build_features import (
     compute_recency,
@@ -17,69 +17,87 @@ from src.features.build_features import (
     SNAPSHOT_DATE,
 )
 
-
 # ── Fixtures ──────────────────────────────────────────────────────────────────
+
 
 @pytest.fixture
 def sample_orders():
     """Commandes minimales pour les tests."""
-    return pd.DataFrame({
-        "order_id":     ["o1", "o2", "o3", "o4"],
-        "customer_id":  ["c1", "c2", "c3", "c1"],  # c1 a 2 commandes
-        "order_status": ["delivered", "delivered", "delivered", "delivered"],
-        "order_purchase_timestamp":    [
-            "2018-01-01", "2018-03-01", "2018-06-01", "2018-07-01"
-        ],
-        "order_delivered_customer_date": [
-            "2018-01-10", "2018-03-10", "2018-06-10", "2018-07-10"
-        ],
-        "order_estimated_delivery_date": [
-            "2018-01-20", "2018-03-05", "2018-06-25", "2018-07-20"
-        ],
-    })
+    return pd.DataFrame(
+        {
+            "order_id": ["o1", "o2", "o3", "o4"],
+            "customer_id": ["c1", "c2", "c3", "c1"],  # c1 a 2 commandes
+            "order_status": ["delivered", "delivered", "delivered", "delivered"],
+            "order_purchase_timestamp": [
+                "2018-01-01",
+                "2018-03-01",
+                "2018-06-01",
+                "2018-07-01",
+            ],
+            "order_delivered_customer_date": [
+                "2018-01-10",
+                "2018-03-10",
+                "2018-06-10",
+                "2018-07-10",
+            ],
+            "order_estimated_delivery_date": [
+                "2018-01-20",
+                "2018-03-05",
+                "2018-06-25",
+                "2018-07-20",
+            ],
+        }
+    )
 
 
 @pytest.fixture
 def sample_customers():
     """Clients minimaux pour les tests."""
-    return pd.DataFrame({
-        "customer_id":        ["c1", "c2", "c3"],
-        "customer_unique_id": ["uc1", "uc2", "uc3"],
-        "customer_state":     ["SP", "RJ", "MG"],
-    })
+    return pd.DataFrame(
+        {
+            "customer_id": ["c1", "c2", "c3"],
+            "customer_unique_id": ["uc1", "uc2", "uc3"],
+            "customer_state": ["SP", "RJ", "MG"],
+        }
+    )
 
 
 @pytest.fixture
 def sample_items():
     """Articles de commande minimaux pour les tests."""
-    return pd.DataFrame({
-        "order_id":     ["o1", "o2", "o3", "o4"],
-        "price":        [100.0, 200.0, 150.0, 300.0],
-        "freight_value":[10.0, 20.0, 15.0, 30.0],
-    })
+    return pd.DataFrame(
+        {
+            "order_id": ["o1", "o2", "o3", "o4"],
+            "price": [100.0, 200.0, 150.0, 300.0],
+            "freight_value": [10.0, 20.0, 15.0, 30.0],
+        }
+    )
 
 
 @pytest.fixture
 def sample_reviews():
     """Avis minimaux pour les tests."""
-    return pd.DataFrame({
-        "order_id":    ["o1", "o2", "o3", "o4"],
-        "review_score":[5, 4, 1, 5],
-    })
+    return pd.DataFrame(
+        {
+            "order_id": ["o1", "o2", "o3", "o4"],
+            "review_score": [5, 4, 1, 5],
+        }
+    )
 
 
 @pytest.fixture
 def sample_dfs(sample_orders, sample_customers, sample_items, sample_reviews):
     """Dictionnaire complet simulant load_olist()."""
     return {
-        "orders":         sample_orders,
-        "customers":      sample_customers,
-        "order_items":    sample_items,
-        "order_reviews":  sample_reviews,
+        "orders": sample_orders,
+        "customers": sample_customers,
+        "order_items": sample_items,
+        "order_reviews": sample_reviews,
     }
 
 
 # ── Tests compute_recency ─────────────────────────────────────────────────────
+
 
 class TestComputeRecency:
 
@@ -115,6 +133,7 @@ class TestComputeRecency:
 
 # ── Tests compute_frequency ───────────────────────────────────────────────────
 
+
 class TestComputeFrequency:
 
     def test_returns_dataframe(self, sample_orders, sample_customers):
@@ -134,13 +153,12 @@ class TestComputeFrequency:
     def test_multi_order_customer(self, sample_orders, sample_customers):
         """Un client avec 2 commandes doit avoir frequency=2."""
         result = compute_frequency(sample_orders, sample_customers)
-        uc1_freq = result[
-            result["customer_unique_id"] == "uc1"
-        ]["frequency"].values[0]
+        uc1_freq = result[result["customer_unique_id"] == "uc1"]["frequency"].values[0]
         assert uc1_freq == 2
 
 
 # ── Tests compute_monetary ────────────────────────────────────────────────────
+
 
 class TestComputeMonetary:
 
@@ -153,17 +171,20 @@ class TestComputeMonetary:
         result = compute_monetary(sample_orders, sample_customers, sample_items)
         assert (result["monetary"] > 0).all()
 
-    def test_monetary_includes_freight(self, sample_orders, sample_customers, sample_items):
+    def test_monetary_includes_freight(
+        self, sample_orders, sample_customers, sample_items
+    ):
         """Le montant doit inclure les frais de port."""
         result = compute_monetary(sample_orders, sample_customers, sample_items)
         # uc1 a 2 commandes : o1 (100+10) + o4 (300+30) = 440
-        uc1_monetary = result[
-            result["customer_unique_id"] == "uc1"
-        ]["monetary"].values[0]
+        uc1_monetary = result[result["customer_unique_id"] == "uc1"]["monetary"].values[
+            0
+        ]
         assert uc1_monetary == pytest.approx(440.0)
 
 
 # ── Tests compute_satisfaction ────────────────────────────────────────────────
+
 
 class TestComputeSatisfaction:
 
@@ -171,7 +192,9 @@ class TestComputeSatisfaction:
         result = compute_satisfaction(sample_orders, sample_customers, sample_reviews)
         assert isinstance(result, pd.DataFrame)
 
-    def test_score_between_1_and_5(self, sample_orders, sample_customers, sample_reviews):
+    def test_score_between_1_and_5(
+        self, sample_orders, sample_customers, sample_reviews
+    ):
         """Le score moyen doit être entre 1 et 5."""
         result = compute_satisfaction(sample_orders, sample_customers, sample_reviews)
         assert (result["review_score_mean"] >= 1).all()
@@ -179,6 +202,7 @@ class TestComputeSatisfaction:
 
 
 # ── Tests compute_delivery ────────────────────────────────────────────────────
+
 
 class TestComputeDelivery:
 
@@ -188,13 +212,15 @@ class TestComputeDelivery:
 
     def test_delay_is_clipped(self, sample_orders, sample_customers):
         """Le délai doit être clippé entre -30 et +30."""
-        result = compute_delivery(sample_orders, sample_customers,
-                                   clip_min=-30, clip_max=30)
+        result = compute_delivery(
+            sample_orders, sample_customers, clip_min=-30, clip_max=30
+        )
         assert (result["delivery_delay_mean"] >= -30).all()
         assert (result["delivery_delay_mean"] <= 30).all()
 
 
 # ── Tests build_features ──────────────────────────────────────────────────────
+
 
 class TestBuildFeatures:
 
@@ -206,9 +232,13 @@ class TestBuildFeatures:
         """Le DataFrame final doit avoir toutes les features."""
         result = build_features(sample_dfs)
         expected_cols = [
-            "recency", "frequency", "monetary",
-            "review_score_mean", "delivery_delay_mean",
-            "frequency_log", "monetary_log"
+            "recency",
+            "frequency",
+            "monetary",
+            "review_score_mean",
+            "delivery_delay_mean",
+            "frequency_log",
+            "monetary_log",
         ]
         for col in expected_cols:
             assert col in result.columns, f"Colonne '{col}' manquante"

@@ -15,6 +15,7 @@ Usage :
     dfs = load_olist("data/raw")
     df_features = build_features(dfs)
 """
+
 import numpy as np
 import pandas as pd
 
@@ -29,6 +30,7 @@ DELAY_CLIP_MAX = 30
 
 
 # ── Fonctions par feature ─────────────────────────────────────────────────────
+
 
 def compute_recency(
     df_orders: pd.DataFrame,
@@ -50,28 +52,22 @@ def compute_recency(
     """
     # Convertir la date d'achat en datetime si pas encore fait
     df = df_orders.copy()
-    df["order_purchase_timestamp"] = pd.to_datetime(
-        df["order_purchase_timestamp"]
-    )
+    df["order_purchase_timestamp"] = pd.to_datetime(df["order_purchase_timestamp"])
 
     # Joindre avec customers pour avoir customer_unique_id
     df = df.merge(
         df_customers[["customer_id", "customer_unique_id"]],
         on="customer_id",
-        how="left"
+        how="left",
     )
 
     # Dernière date d'achat par client unique
     recency = (
-        df.groupby("customer_unique_id")["order_purchase_timestamp"]
-        .max()
-        .reset_index()
+        df.groupby("customer_unique_id")["order_purchase_timestamp"].max().reset_index()
     )
 
     # Récence = nb de jours depuis le dernier achat
-    recency["recency"] = (
-        snapshot_date - recency["order_purchase_timestamp"]
-    ).dt.days
+    recency["recency"] = (snapshot_date - recency["order_purchase_timestamp"]).dt.days
 
     return recency[["customer_unique_id", "recency"]]
 
@@ -93,7 +89,7 @@ def compute_frequency(
     df = df_orders.merge(
         df_customers[["customer_id", "customer_unique_id"]],
         on="customer_id",
-        how="left"
+        how="left",
     )
 
     frequency = (
@@ -123,23 +119,21 @@ def compute_monetary(
     """
     # Montant total par commande
     items_agg = (
-        df_items
-        .groupby("order_id")
-        .agg(order_value=("price", "sum"),
-             freight_value=("freight_value", "sum"))
+        df_items.groupby("order_id")
+        .agg(order_value=("price", "sum"), freight_value=("freight_value", "sum"))
         .reset_index()
     )
-    items_agg["total_value"] = (
-        items_agg["order_value"] + items_agg["freight_value"]
-    )
+    items_agg["total_value"] = items_agg["order_value"] + items_agg["freight_value"]
 
     # Joindre orders + customers + montants
     df = (
         df_orders[["order_id", "customer_id"]]
-        .merge(df_customers[["customer_id", "customer_unique_id"]],
-               on="customer_id", how="left")
-        .merge(items_agg[["order_id", "total_value"]],
-               on="order_id", how="left")
+        .merge(
+            df_customers[["customer_id", "customer_unique_id"]],
+            on="customer_id",
+            how="left",
+        )
+        .merge(items_agg[["order_id", "total_value"]], on="order_id", how="left")
     )
 
     # Montant total par client unique
@@ -170,10 +164,12 @@ def compute_satisfaction(
     """
     df = (
         df_orders[["order_id", "customer_id"]]
-        .merge(df_customers[["customer_id", "customer_unique_id"]],
-               on="customer_id", how="left")
-        .merge(df_reviews[["order_id", "review_score"]],
-               on="order_id", how="left")
+        .merge(
+            df_customers[["customer_id", "customer_unique_id"]],
+            on="customer_id",
+            how="left",
+        )
+        .merge(df_reviews[["order_id", "review_score"]], on="order_id", how="left")
     )
 
     satisfaction = (
@@ -220,8 +216,7 @@ def compute_delivery(
 
     # Calcul du délai en jours
     df["delivery_delay"] = (
-        df["order_delivered_customer_date"] -
-        df["order_estimated_delivery_date"]
+        df["order_delivered_customer_date"] - df["order_estimated_delivery_date"]
     ).dt.days
 
     # Clipping des outliers
@@ -231,7 +226,7 @@ def compute_delivery(
     df = df.merge(
         df_customers[["customer_id", "customer_unique_id"]],
         on="customer_id",
-        how="left"
+        how="left",
     )
 
     # Délai moyen par client
@@ -245,6 +240,7 @@ def compute_delivery(
 
 
 # ── Fonction principale ───────────────────────────────────────────────────────
+
 
 def build_features(
     dfs: dict,
@@ -274,9 +270,7 @@ def build_features(
     print("Building features...")
 
     # ── Étape 1 : filtrer les commandes livrées ───────────────────────────
-    orders_clean = dfs["orders"][
-        dfs["orders"]["order_status"] == "delivered"
-    ].copy()
+    orders_clean = dfs["orders"][dfs["orders"]["order_status"] == "delivered"].copy()
     orders_clean["order_purchase_timestamp"] = pd.to_datetime(
         orders_clean["order_purchase_timestamp"]
     )
@@ -284,17 +278,13 @@ def build_features(
 
     # ── Étape 2 : calculer chaque feature ────────────────────────────────
     print("  Calcul recency...")
-    recency = compute_recency(
-        orders_clean, dfs["customers"], snapshot_date
-    )
+    recency = compute_recency(orders_clean, dfs["customers"], snapshot_date)
 
     print("  Calcul frequency...")
     frequency = compute_frequency(orders_clean, dfs["customers"])
 
     print("  Calcul monetary...")
-    monetary = compute_monetary(
-        orders_clean, dfs["customers"], dfs["order_items"]
-    )
+    monetary = compute_monetary(orders_clean, dfs["customers"], dfs["order_items"])
 
     print("  Calcul satisfaction...")
     satisfaction = compute_satisfaction(
@@ -330,7 +320,7 @@ def build_features(
     if apply_log:
         # log1p sur frequency et monetary pour réduire l'asymétrie
         df["frequency_log"] = np.log1p(df["frequency"])
-        df["monetary_log"]   = np.log1p(df["monetary"])
+        df["monetary_log"] = np.log1p(df["monetary"])
         print("  Log1p appliqué sur frequency et monetary")
 
     print(f"\nFeatures finales : {list(df.columns)}")
