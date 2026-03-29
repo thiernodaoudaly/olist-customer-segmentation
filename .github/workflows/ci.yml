@@ -1,0 +1,50 @@
+name: CI — Tests & Qualité de code
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Tests unitaires
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Récupérer le code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Installer Python 3.13
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: "pip"           # met en cache les packages → builds plus rapides
+
+      # 3. Installer les dépendances
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      # 4. Vérifier le formatage avec Black
+      - name: Check formatting (Black)
+        run: black --check src/ tests/
+
+      # 5. Vérifier le linting avec Flake8
+      - name: Lint (Flake8)
+        run: flake8 src/ tests/
+
+      # 6. Lancer les tests avec couverture
+      - name: Run tests
+        run: pytest tests/ -v --cov=src --cov-report=xml
+
+      # 7. Uploader le rapport de couverture
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
