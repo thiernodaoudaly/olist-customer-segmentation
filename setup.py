@@ -1,7 +1,7 @@
 from setuptools import find_packages, setup
 
 setup(
-    name="olist-customer-segmentation",
+    name="olist-segmentation",
     version="0.1.0",
     author="Thierno Daouda LY",              
     description="Segmentation des clients de Olist",       
