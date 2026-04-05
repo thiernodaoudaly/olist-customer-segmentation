@@ -1,0 +1,19 @@
+stages:
+  train:
+    cmd: python src/models/train.py
+    deps:
+      - src/models/train.py
+      - src/data/load_data.py
+      - src/features/build_features.py
+      - data/raw
+    params:
+      - params.yaml:
+          - train.n_clusters
+          - train.random_state
+    outs:
+      - data/processed/rfm_features.csv
+      - models/kmeans_model.pkl
+      - models/scaler.pkl
+    metrics:
+      - metrics.json:
+          cache: false
