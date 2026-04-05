@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Olist Segmentation — Dashboard Marketing</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --olist-blue:    #1D4ED8;
+    --olist-blue-lt: #2563EB;
+    --olist-orange:  #F97316;
+    --olist-dark:    #0f172a;
+    --olist-mid:     #1e293b;
+    --olist-card:    #1e293b;
+    --olist-border:  rgba(29,78,216,0.25);
+    --olist-text:    #f1f5f9;
+    --olist-muted:   #94a3b8;
+    --seg0: #22c55e;
+    --seg1: #1D4ED8;
+    --seg2: #ef4444;
+    --seg3: #F97316;
+  }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--olist-dark);
+    color: var(--olist-text);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: var(--olist-mid);
+    border-bottom: 1px solid var(--olist-border);
+    padding: 14px 40px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-wrap {
+    height: 36px;
+    display: flex; align-items: center;
+  }
+
+  .logo-wrap img {
+    height: 36px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* Fallback si l'image ne charge pas */
+  .logo-fallback {
+    width: 42px; height: 36px;
+    background: var(--olist-blue);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700; font-size: 16px;
+    color: #fff;
+  }
+
+  .header-divider {
+    width: 1px; height: 28px;
+    background: var(--olist-border);
+    flex-shrink: 0;
+  }
+
+  .header-text h1 {
+    font-size: 15px; font-weight: 700;
+    color: var(--olist-text);
+    letter-spacing: -0.3px;
+  }
+
+  .header-text p {
+    font-size: 11px; color: var(--olist-muted);
+    margin-top: 2px;
+  }
+
+  .header-badge {
+    margin-left: auto;
+    background: rgba(29,78,216,0.15);
+    border: 1px solid var(--olist-border);
+    color: var(--olist-blue-lt);
+    font-size: 11px; font-weight: 600;
+    padding: 5px 12px; border-radius: 20px;
+    letter-spacing: 0.5px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* ── Main ── */
+  .main { padding: 32px 40px; max-width: 900px; }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex; gap: 4px;
+    background: var(--olist-mid);
+    border: 1px solid var(--olist-border);
+    border-radius: 10px; padding: 4px;
+    margin-bottom: 28px; width: fit-content;
+  }
+
+  .tab {
+    padding: 8px 20px; border-radius: 7px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; border: none;
+    background: transparent; color: var(--olist-muted);
+    transition: all 0.2s;
+    font-family: 'Sora', sans-serif;
+  }
+
+  .tab.active {
+    background: var(--olist-blue);
+    color: #fff;
+  }
+
+  /* ── Panels ── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── Segments panel ── */
+  .segments-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .segment-card {
+    background: var(--olist-card);
+    border: 1px solid var(--olist-border);
+    border-radius: 12px; padding: 20px;
+    position: relative; overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+
+  .segment-card:hover { transform: translateY(-2px); }
+
+  .segment-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+  }
+
+  .segment-card[data-seg="0"]::before { background: var(--seg0); }
+  .segment-card[data-seg="1"]::before { background: var(--seg1); }
+  .segment-card[data-seg="2"]::before { background: var(--seg2); }
+  .segment-card[data-seg="3"]::before { background: var(--seg3); }
+
+  .seg-id {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px; font-weight: 700;
+    margin-bottom: 6px; opacity: 0.8;
+  }
+
+  .segment-card[data-seg="0"] .seg-id { color: var(--seg0); }
+  .segment-card[data-seg="1"] .seg-id { color: var(--seg1); }
+  .segment-card[data-seg="2"] .seg-id { color: var(--seg2); }
+  .segment-card[data-seg="3"] .seg-id { color: var(--seg3); }
+
+  .seg-name { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+
+  .seg-strategy {
+    font-size: 12px; color: var(--olist-muted);
+    line-height: 1.5;
+  }
+
+  /* ── Predict panel ── */
+  .predict-layout {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 24px; align-items: start;
+  }
+
+  .form-card {
+    background: var(--olist-card);
+    border: 1px solid var(--olist-border);
+    border-radius: 12px; padding: 24px;
+  }
+
+  .form-card h3 {
+    font-size: 13px; font-weight: 700;
+    color: var(--olist-blue-lt);
+    margin-bottom: 20px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .field { margin-bottom: 16px; }
+
+  .field label {
+    display: block; font-size: 12px;
+    color: var(--olist-muted); margin-bottom: 6px;
+    font-weight: 600; letter-spacing: 0.3px;
+  }
+
+  .field input {
+    width: 100%; padding: 10px 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--olist-border);
+    border-radius: 8px; color: var(--olist-text);
+    font-family: 'Space Mono', monospace;
+    font-size: 14px; outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .field input:focus { border-color: var(--olist-blue-lt); }
+
+  .field .hint {
+    font-size: 11px; color: var(--olist-muted);
+    margin-top: 4px;
+  }
+
+  .btn-predict {
+    width: 100%; padding: 13px;
+    background: var(--olist-blue);
+    color: #fff;
+    border: none; border-radius: 9px;
+    font-family: 'Sora', sans-serif;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; margin-top: 8px;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-predict:hover { background: var(--olist-blue-lt); transform: translateY(-1px); }
+  .btn-predict:active { transform: translateY(0); }
+  .btn-predict:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ── Result card ── */
+  .result-card {
+    background: var(--olist-card);
+    border: 1px solid var(--olist-border);
+    border-radius: 12px; padding: 24px;
+    min-height: 200px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+
+  .result-placeholder {
+    text-align: center; color: var(--olist-muted);
+  }
+
+  .result-placeholder .icon {
+    font-size: 36px; margin-bottom: 12px; opacity: 0.3;
+  }
+
+  .result-placeholder p { font-size: 13px; line-height: 1.6; }
+
+  .result-content { width: 100%; }
+
+  .result-segment-badge {
+    display: inline-block;
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 11px; font-weight: 700;
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 14px;
+    letter-spacing: 0.5px;
+  }
+
+  .result-name {
+    font-size: 22px; font-weight: 700;
+    margin-bottom: 10px; line-height: 1.2;
+  }
+
+  .result-strategy {
+    font-size: 13px; color: var(--olist-muted);
+    line-height: 1.6; padding: 12px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px; margin-bottom: 16px;
+  }
+
+  .result-bar {
+    height: 4px; border-radius: 2px;
+    background: rgba(255,255,255,0.08);
+    margin-bottom: 16px; overflow: hidden;
+  }
+
+  .result-bar-fill {
+    height: 100%; border-radius: 2px;
+    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .result-features {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .feat-item {
+    background: rgba(255,255,255,0.04);
+    border-radius: 6px; padding: 8px 10px;
+  }
+
+  .feat-item .feat-label {
+    font-size: 10px; color: var(--olist-muted);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 2px;
+  }
+
+  .feat-item .feat-val {
+    font-size: 14px; font-weight: 700;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .error-msg {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 8px; padding: 12px;
+    color: #ef4444; font-size: 13px;
+    text-align: center; line-height: 1.6;
+  }
+
+  .loading-dots {
+    display: flex; gap: 6px;
+    align-items: center; justify-content: center;
+    height: 40px;
+  }
+
+  .loading-dots span {
+    width: 8px; height: 8px;
+    background: var(--olist-blue-lt);
+    border-radius: 50%;
+    animation: bounce 1.2s ease-in-out infinite;
+  }
+
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes bounce {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+    40% { transform: scale(1); opacity: 1; }
+  }
+
+  /* ── Quick tests ── */
+  .quick-tests {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--olist-border);
+  }
+
+  .quick-tests p {
+    font-size: 11px; color: var(--olist-muted);
+    margin-bottom: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .quick-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .quick-btn {
+    padding: 6px 12px; border-radius: 6px;
+    font-size: 11px; font-weight: 700;
+    cursor: pointer; border: 1px solid;
+    font-family: 'Space Mono', monospace;
+    transition: all 0.15s; background: transparent;
+  }
+
+  .quick-btn[data-seg="0"] { color: var(--seg0); border-color: var(--seg0); }
+  .quick-btn[data-seg="0"]:hover { background: rgba(34,197,94,0.1); }
+  .quick-btn[data-seg="1"] { color: var(--seg1); border-color: var(--seg1); }
+  .quick-btn[data-seg="1"]:hover { background: rgba(29,78,216,0.1); }
+  .quick-btn[data-seg="2"] { color: var(--seg2); border-color: var(--seg2); }
+  .quick-btn[data-seg="2"]:hover { background: rgba(239,68,68,0.1); }
+  .quick-btn[data-seg="3"] { color: var(--seg3); border-color: var(--seg3); }
+  .quick-btn[data-seg="3"]:hover { background: rgba(249,115,22,0.1); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <!-- Logo Olist — remplace le src par le chemin de ton image -->
+  <div class="logo-wrap">
+    <img
+      src="../assets/images/olist_logo.png"
+      alt="Olist"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+    >
+    <div class="logo-fallback" style="display:none;">O</div>
+  </div>
+
+  <div class="header-divider"></div>
+
+  <div class="header-text">
+    <h1>Segmentation Clients</h1>
+    <p>Outil marketing — K-Means · 93 358 clients · 4 segments</p>
+  </div>
+
+  <span class="header-badge">v1.0.0</span>
+</div>
+
+<div class="main">
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('segments')">Segments</button>
+    <button class="tab" onclick="switchTab('predict')">Prédire un client</button>
+  </div>
+
+  <!-- Panel Segments -->
+  <div class="panel active" id="panel-segments">
+    <div class="segments-grid" id="segments-grid">
+      <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--olist-muted);">
+        <div class="loading-dots"><span></span><span></span><span></span></div>
+        <p style="margin-top:12px;font-size:13px;">Chargement des segments...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel Predict -->
+  <div class="panel" id="panel-predict">
+    <div class="predict-layout">
+
+      <div class="form-card">
+        <h3>Données client</h3>
+
+        <div class="field">
+          <label>Récence (jours depuis dernier achat)</label>
+          <input type="number" id="recency" value="135" min="0" max="800">
+          <div class="hint">0 = achat aujourd'hui · 715 = plus ancien</div>
+        </div>
+
+        <div class="field">
+          <label>Fréquence (nb de commandes)</label>
+          <input type="number" id="frequency" value="1" min="1" max="20">
+        </div>
+
+        <div class="field">
+          <label>Montant total dépensé (BRL)</label>
+          <input type="number" id="monetary" value="147" min="1" max="15000" step="0.01">
+        </div>
+
+        <div class="field">
+          <label>Score satisfaction moyen (1 – 5)</label>
+          <input type="number" id="review_score_mean" value="4.5" min="1" max="5" step="0.1">
+        </div>
+
+        <div class="field">
+          <label>Délai livraison moyen (jours)</label>
+          <input type="number" id="delivery_delay_mean" value="-12" min="-30" max="30">
+          <div class="hint">Négatif = en avance · Positif = en retard</div>
+        </div>
+
+        <button class="btn-predict" onclick="runPredict()">
+          Prédire le segment
+        </button>
+
+        <div class="quick-tests">
+          <p>Profils types</p>
+          <div class="quick-btns">
+            <button class="quick-btn" data-seg="0" onclick="loadProfile(0)">Nouveau satisfait</button>
+            <button class="quick-btn" data-seg="1" onclick="loadProfile(1)">Dormant</button>
+            <button class="quick-btn" data-seg="2" onclick="loadProfile(2)">Insatisfait</button>
+            <button class="quick-btn" data-seg="3" onclick="loadProfile(3)">VIP</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-card" id="result-card">
+        <div class="result-placeholder">
+          <div class="icon">◎</div>
+          <p>Renseignez les données client<br>et lancez la prédiction</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const API = "http://localhost:8000";
+
+  const SEG_COLORS = {
+    0: { color: "#22c55e", bg: "rgba(34,197,94,0.12)",  label: "SEGMENT 0" },
+    1: { color: "#2563EB", bg: "rgba(37,99,235,0.12)",  label: "SEGMENT 1" },
+    2: { color: "#ef4444", bg: "rgba(239,68,68,0.12)",  label: "SEGMENT 2" },
+    3: { color: "#F97316", bg: "rgba(249,115,22,0.12)", label: "SEGMENT 3" },
+  };
+
+  const PROFILES = [
+    { recency: 135, frequency: 1, monetary: 147, review_score_mean: 4.7, delivery_delay_mean: -13 },
+    { recency: 404, frequency: 1, monetary: 168, review_score_mean: 4.6, delivery_delay_mean: -14 },
+    { recency: 229, frequency: 1, monetary: 188, review_score_mean: 1.6, delivery_delay_mean: -4  },
+    { recency: 222, frequency: 3, monetary: 309, review_score_mean: 4.2, delivery_delay_mean: -12 },
+  ];
+
+  function switchTab(tab) {
+    document.querySelectorAll(".tab").forEach((t, i) => {
+      t.classList.toggle(
+        "active",
+        (i === 0 && tab === "segments") || (i === 1 && tab === "predict")
+      );
+    });
+    document.getElementById("panel-segments").classList.toggle("active", tab === "segments");
+    document.getElementById("panel-predict").classList.toggle("active", tab === "predict");
+  }
+
+  function loadProfile(idx) {
+    const p = PROFILES[idx];
+    document.getElementById("recency").value             = p.recency;
+    document.getElementById("frequency").value           = p.frequency;
+    document.getElementById("monetary").value            = p.monetary;
+    document.getElementById("review_score_mean").value   = p.review_score_mean;
+    document.getElementById("delivery_delay_mean").value = p.delivery_delay_mean;
+  }
+
+  async function loadSegments() {
+    try {
+      const res  = await fetch(`${API}/segments`);
+      const data = await res.json();
+      const grid = document.getElementById("segments-grid");
+      grid.innerHTML = data.map(s => {
+        const c = SEG_COLORS[s.segment_id];
+        return `
+          <div class="segment-card" data-seg="${s.segment_id}">
+            <div class="seg-id">SEGMENT ${s.segment_id}</div>
+            <div class="seg-name">${s.segment_name}</div>
+            <div class="seg-strategy">${s.strategy}</div>
+          </div>`;
+      }).join("");
+    } catch (e) {
+      document.getElementById("segments-grid").innerHTML =
+        `<div class="error-msg" style="grid-column:1/-1">
+          Impossible de contacter l'API.<br>
+          <small>Vérifiez que uvicorn tourne sur localhost:8000</small>
+        </div>`;
+    }
+  }
+
+  async function runPredict() {
+    const btn  = document.querySelector(".btn-predict");
+    const card = document.getElementById("result-card");
+
+    btn.disabled   = true;
+    card.innerHTML = `<div class="loading-dots"><span></span><span></span><span></span></div>`;
+
+    const body = {
+      recency:             parseFloat(document.getElementById("recency").value),
+      frequency:           parseFloat(document.getElementById("frequency").value),
+      monetary:            parseFloat(document.getElementById("monetary").value),
+      review_score_mean:   parseFloat(document.getElementById("review_score_mean").value),
+      delivery_delay_mean: parseFloat(document.getElementById("delivery_delay_mean").value),
+    };
+
+    try {
+      const res = await fetch(`${API}/predict`, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify(body),
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const data = await res.json();
+      const c    = SEG_COLORS[data.segment_id];
+
+      card.innerHTML = `
+        <div class="result-content">
+          <span class="result-segment-badge"
+                style="background:${c.bg};color:${c.color}">
+            ${c.label}
+          </span>
+          <div class="result-name">${data.segment_name}</div>
+          <div class="result-strategy">${data.strategy}</div>
+          <div class="result-bar">
+            <div class="result-bar-fill"
+                 style="width:0%;background:${c.color}"
+                 id="bar-fill"></div>
+          </div>
+          <div class="result-features">
+            <div class="feat-item">
+              <div class="feat-label">RÉCENCE</div>
+              <div class="feat-val" style="color:${c.color}">${body.recency}j</div>
+            </div>
+            <div class="feat-item">
+              <div class="feat-label">MONTANT</div>
+              <div class="feat-val" style="color:${c.color}">${body.monetary} BRL</div>
+            </div>
+            <div class="feat-item">
+              <div class="feat-label">SATISFACTION</div>
+              <div class="feat-val" style="color:${c.color}">${body.review_score_mean}/5</div>
+            </div>
+            <div class="feat-item">
+              <div class="feat-label">DÉLAI</div>
+              <div class="feat-val" style="color:${c.color}">${body.delivery_delay_mean}j</div>
+            </div>
+          </div>
+        </div>`;
+
+      setTimeout(() => {
+        const fill = document.getElementById("bar-fill");
+        if (fill) fill.style.width = "100%";
+      }, 100);
+
+    } catch (e) {
+      card.innerHTML = `
+        <div class="error-msg">
+          Erreur de connexion à l'API.<br>
+          <small>Vérifiez que uvicorn tourne sur localhost:8000</small>
+        </div>`;
+    }
+
+    btn.disabled = false;
+  }
+
+  loadSegments();
+</script>
+
+</body>
+</html>
