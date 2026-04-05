@@ -10,6 +10,7 @@ Usage :
     uvicorn src.api.main:app --reload --port 8000
     Documentation : http://localhost:8000/docs
 """
+
 import os
 from contextlib import asynccontextmanager
 
@@ -23,7 +24,6 @@ from src.models.predict import (
     SEGMENT_STRATEGIES,
     predict_segment,
 )
-
 
 # ── Modèles Pydantic ──────────────────────────────────────────────────────────
 
@@ -122,12 +122,8 @@ def load_models():
         run_id = runs[0].info.run_id
 
         # Charger le modèle et le scaler
-        _kmeans_model = mlflow.sklearn.load_model(
-            f"runs:/{run_id}/kmeans_model"
-        )
-        _scaler = mlflow.sklearn.load_model(
-            f"runs:/{run_id}/scaler"
-        )
+        _kmeans_model = mlflow.sklearn.load_model(f"runs:/{run_id}/kmeans_model")
+        _scaler = mlflow.sklearn.load_model(f"runs:/{run_id}/scaler")
 
         print(f"Modèle chargé depuis run : {run_id}")
         print(f"K-Means clusters : {_kmeans_model.n_clusters}")

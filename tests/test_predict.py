@@ -1,6 +1,7 @@
 """
 Tests unitaires pour src/models/predict.py
 """
+
 import numpy as np
 import pytest
 from unittest.mock import MagicMock
@@ -11,7 +12,6 @@ from src.models.predict import (
     FEATURES,
     predict_segment,
 )
-
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 
@@ -47,10 +47,10 @@ def mock_kmeans_cluster3():
 def sample_client():
     """Client type — Nouveau satisfait."""
     return {
-        "recency":             135,
-        "frequency":           1,
-        "monetary":            147.0,
-        "review_score_mean":   4.5,
+        "recency": 135,
+        "frequency": 1,
+        "monetary": 147.0,
+        "review_score_mean": 4.5,
         "delivery_delay_mean": -12.0,
     }
 
@@ -59,10 +59,10 @@ def sample_client():
 def vip_client():
     """Client type — VIP multi-acheteurs."""
     return {
-        "recency":             222,
-        "frequency":           3,
-        "monetary":            309.0,
-        "review_score_mean":   4.2,
+        "recency": 222,
+        "frequency": 3,
+        "monetary": 309.0,
+        "review_score_mean": 4.2,
         "delivery_delay_mean": -12.0,
     }
 
@@ -100,68 +100,46 @@ class TestConstants:
 
 class TestPredictSegment:
 
-    def test_returns_dict(
-        self, sample_client, mock_kmeans_cluster0, mock_scaler
-    ):
+    def test_returns_dict(self, sample_client, mock_kmeans_cluster0, mock_scaler):
         """predict_segment() doit retourner un dictionnaire."""
-        result = predict_segment(
-            sample_client, mock_kmeans_cluster0, mock_scaler
-        )
+        result = predict_segment(sample_client, mock_kmeans_cluster0, mock_scaler)
         assert isinstance(result, dict)
 
-    def test_has_required_keys(
-        self, sample_client, mock_kmeans_cluster0, mock_scaler
-    ):
+    def test_has_required_keys(self, sample_client, mock_kmeans_cluster0, mock_scaler):
         """Le résultat doit avoir les clés segment_id, segment_name, strategy."""
-        result = predict_segment(
-            sample_client, mock_kmeans_cluster0, mock_scaler
-        )
-        assert "segment_id"   in result
+        result = predict_segment(sample_client, mock_kmeans_cluster0, mock_scaler)
+        assert "segment_id" in result
         assert "segment_name" in result
-        assert "strategy"     in result
+        assert "strategy" in result
 
-    def test_segment_id_is_int(
-        self, sample_client, mock_kmeans_cluster0, mock_scaler
-    ):
+    def test_segment_id_is_int(self, sample_client, mock_kmeans_cluster0, mock_scaler):
         """segment_id doit être un entier."""
-        result = predict_segment(
-            sample_client, mock_kmeans_cluster0, mock_scaler
-        )
+        result = predict_segment(sample_client, mock_kmeans_cluster0, mock_scaler)
         assert isinstance(result["segment_id"], int)
 
     def test_segment_id_in_valid_range(
         self, sample_client, mock_kmeans_cluster0, mock_scaler
     ):
         """segment_id doit être entre 0 et 3."""
-        result = predict_segment(
-            sample_client, mock_kmeans_cluster0, mock_scaler
-        )
+        result = predict_segment(sample_client, mock_kmeans_cluster0, mock_scaler)
         assert 0 <= result["segment_id"] <= 3
 
     def test_cluster0_returns_correct_name(
         self, sample_client, mock_kmeans_cluster0, mock_scaler
     ):
         """Cluster 0 doit retourner 'Nouveaux satisfaits'."""
-        result = predict_segment(
-            sample_client, mock_kmeans_cluster0, mock_scaler
-        )
-        assert result["segment_id"]   == 0
+        result = predict_segment(sample_client, mock_kmeans_cluster0, mock_scaler)
+        assert result["segment_id"] == 0
         assert result["segment_name"] == SEGMENT_NAMES[0]
-        assert result["strategy"]     == SEGMENT_STRATEGIES[0]
+        assert result["strategy"] == SEGMENT_STRATEGIES[0]
 
-    def test_cluster3_returns_vip(
-        self, vip_client, mock_kmeans_cluster3, mock_scaler
-    ):
+    def test_cluster3_returns_vip(self, vip_client, mock_kmeans_cluster3, mock_scaler):
         """Cluster 3 doit retourner 'VIP multi-acheteurs'."""
-        result = predict_segment(
-            vip_client, mock_kmeans_cluster3, mock_scaler
-        )
-        assert result["segment_id"]   == 3
+        result = predict_segment(vip_client, mock_kmeans_cluster3, mock_scaler)
+        assert result["segment_id"] == 3
         assert result["segment_name"] == "VIP multi-acheteurs"
 
-    def test_log1p_applied_to_frequency(
-        self, sample_client, mock_scaler
-    ):
+    def test_log1p_applied_to_frequency(self, sample_client, mock_scaler):
         """
         Vérifie que log1p est appliqué sur frequency et monetary
         avant le scaling.
@@ -182,9 +160,7 @@ class TestPredictSegment:
         # Vérifier que frequency_log = log1p(1) ≈ 0.693
         freq_idx = FEATURES.index("frequency_log")
         expected_freq_log = np.log1p(sample_client["frequency"])
-        assert abs(
-            captured_input["X"][0][freq_idx] - expected_freq_log
-        ) < 1e-6
+        assert abs(captured_input["X"][0][freq_idx] - expected_freq_log) < 1e-6
 
     def test_scaler_transform_called_once(
         self, sample_client, mock_kmeans_cluster0, mock_scaler
