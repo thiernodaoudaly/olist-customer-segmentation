@@ -1,0 +1,4 @@
+train:
+  n_clusters: 4
+  random_state: 42
+  data_dir: data/raw
