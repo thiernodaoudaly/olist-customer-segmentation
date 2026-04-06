@@ -27,7 +27,6 @@ from src.models.predict import (
 
 from fastapi.middleware.cors import CORSMiddleware
 
-
 # ── Modèles Pydantic ──────────────────────────────────────────────────────────
 
 

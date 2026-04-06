@@ -1,8 +1,7 @@
 # ───── Données & modèles (gérés par DVC) ─────
 data/raw/
 data/processed/
-models/
-
+/models/
 # ───── Secrets ─────
 .env
 .env.*           # couvre .env.local, .env.production, etc.
