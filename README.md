@@ -76,37 +76,37 @@ des campagnes ciblées et mesurables.
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    PIPELINE MLOPS                        │
-│                                                          │
-│  data/raw/        →   src/data/load_data.py              │
-│  (CSV Olist)          Chargement des 5 tables            │
-│      ↓                                                   │
-│  src/features/    →   build_features.py                  │
-│  build_features       RFM enrichi (récence, fréquence,   │
-│                       montant, satisfaction, livraison)   │
-│      ↓                                                   │
-│  src/models/      →   train.py                           │
-│  train                K-Means K=4 + MLflow logging       │
-│      ↓                                                   │
-│  models/          →   kmeans_model.pkl + scaler.pkl      │
-│  artefacts            Sauvegardés localement + MLflow    │
-│      ↓                                                   │
-│  src/api/         →   main.py (FastAPI)                  │
-│  main                 3 endpoints REST + Swagger         │
-│      ↓                                                   │
-│  dashboard/       →   index.html                         │
-│  index.html           Interface marketing                │
+│                    PIPELINE MLOPS                       │
+│                                                         │
+│  data/raw/        →   src/data/load_data.py             │
+│  (CSV Olist)          Chargement des 5 tables           │
+│      ↓                                                  │
+│  src/features/    →   build_features.py                 │
+│  build_features       RFM enrichi (récence, fréquence,  │
+│                       montant, satisfaction, livraison) │
+│      ↓                                                  │
+│  src/models/      →   train.py                          │
+│  train                K-Means K=4 + MLflow logging      │
+│      ↓                                                  │
+│  models/          →   kmeans_model.pkl + scaler.pkl     │
+│  artefacts            Sauvegardés localement + MLflow   │
+│      ↓                                                  │
+│  src/api/         →   main.py (FastAPI)                 │
+│  main                 3 endpoints REST + Swagger        │
+│      ↓                                                  │
+│  dashboard/       →   index.html                        │
+│  index.html           Interface marketing               │
 └─────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────┐
-│                    QUALITÉ & CI/CD                       │
-│                                                          │
-│  tests/           →   49 tests unitaires Pytest          │
-│                       couverture 100% logique métier     │
-│      ↓                                                   │
-│  .github/         →   GitHub Actions                     │
-│  workflows/ci.yml     Black + Flake8 + Pytest            │
-│                       exécutés à chaque git push         │
+│                    QUALITÉ & CI/CD                      │
+│                                                         │
+│  tests/           →   49 tests unitaires Pytest         │
+│                       couverture 100% logique métier    │
+│      ↓                                                  │
+│  .github/         →   GitHub Actions                    │
+│  workflows/ci.yml     Black + Flake8 + Pytest           │
+│                       exécutés à chaque git push        │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -117,8 +117,6 @@ des campagnes ciblées et mesurables.
 Les données comprennent l'historique des commandes de 2016 à 2018,
 avec 100 000 commandes réelles anonymisées, gracieusement fournies
 par Olist sous licence CC BY-NC-SA 4.0 et disponibles sur Kaggle.
-
-**Lien :** https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce
 
 <p align="center">
   <img src="assets/images/olist_database_schema.webp"
@@ -265,8 +263,7 @@ L'API doit tourner sur localhost:8000 pour que le dashboard fonctionne.
 
 ### Option A — Avec Docker (recommandé pour la production)
 
-Docker garantit la reproductibilité totale — même résultat sur
-n'importe quelle machine, quel que soit l'OS.
+Docker garantit la reproductibilité totale.
 
 ```bash
 # Construire et lancer tous les services
@@ -337,8 +334,6 @@ sont nécessaires avant le clustering ?
 jupyter notebook notebooks/segmentation_01_eda.ipynb
 ```
 
----
-
 #### `notebooks/segmentation_02_modeling.ipynb`
 **Rôle :** Feature engineering, modélisation et tracking MLflow.
 
@@ -359,8 +354,6 @@ et produit le modèle final avec les 4 segments nommés.
 jupyter notebook notebooks/segmentation_02_modeling.ipynb
 ```
 
----
-
 #### `notebooks/segmentation_03_simulation.ipynb`
 **Rôle :** Simulation de la stabilité des segments dans le temps.
 
@@ -379,8 +372,6 @@ restent cohérents avec le temps via l'ARI et la variance du silhouette.
 ```bash
 jupyter notebook notebooks/segmentation_03_simulation.ipynb
 ```
-
----
 
 ### Code source (`src/`)
 
@@ -409,8 +400,6 @@ dfs = load_olist("data/raw")
 orders = dfs["orders"]       # 99 441 lignes × 8 colonnes
 customers = dfs["customers"] # 99 441 lignes × 5 colonnes
 ```
-
----
 
 #### `src/features/build_features.py`
 **Rôle :** Construction des features RFM enrichies.
@@ -448,8 +437,6 @@ df_features = build_features(dfs)
 # Retourne 93 358 lignes × 8 colonnes
 ```
 
----
-
 #### `src/models/train.py`
 **Rôle :** Script standalone d'entraînement du modèle complet.
 
@@ -475,8 +462,6 @@ python src/models/train.py --data-dir data/raw --random-state 0
 - `models/kmeans_model.pkl` — modèle K-Means sérialisé
 - `models/scaler.pkl` — StandardScaler sérialisé
 - Run MLflow avec paramètres, métriques et artefacts
-
----
 
 #### `src/models/predict.py`
 **Rôle :** Prédiction du segment d'un client individuel.
@@ -515,8 +500,6 @@ result = predict_segment(
 # {"segment_id": 0, "segment_name": "Nouveaux satisfaits", "strategy": "..."}
 ```
 
----
-
 #### `src/api/main.py`
 **Rôle :** API REST FastAPI exposant le modèle de segmentation.
 
@@ -543,8 +526,6 @@ uvicorn src.api.main:app --reload --port 8000
 
 **Documentation interactive :** http://localhost:8000/docs
 
----
-
 ### Scripts utilitaires (`scripts/`)
 
 #### `scripts/check_env.py`
@@ -558,8 +539,6 @@ python scripts/check_env.py
 Affiche un tableau avec le statut (OK / MANQUANT) et la version
 de chaque package. Pratique après une nouvelle installation
 ou avant un déploiement.
-
----
 
 #### `scripts/load_data.py`
 **Rôle :** Téléchargement automatique du dataset Olist depuis Kaggle
@@ -576,8 +555,6 @@ python scripts/load_data.py --data-dir data/raw
 python scripts/load_data.py --force  # re-télécharge si déjà présent
 ```
 
----
-
 ### Tests (`tests/`)
 
 #### `tests/test_sanity.py`
@@ -585,8 +562,6 @@ python scripts/load_data.py --force  # re-télécharge si déjà présent
 fonctionne et que le package `src/` est importable.
 
 3 tests : Python fonctionne, packages installés, src/ importable.
-
----
 
 #### `tests/test_load_data.py`
 **Rôle :** Tests unitaires pour `src/data/load_data.py`.
@@ -603,8 +578,6 @@ fonctionne et que le package `src/` est importable.
 et des mini-CSV de 3-5 lignes — pas les vrais CSV Olist.
 Cela garantit des tests rapides (< 1s) et indépendants du filesystem.
 
----
-
 #### `tests/test_build_features.py`
 **Rôle :** Tests unitaires pour `src/features/build_features.py`.
 
@@ -614,8 +587,6 @@ Cela garantit des tests rapides (< 1s) et indépendants du filesystem.
 - `compute_monetary()` — montant inclut les frais de port
 - `compute_delivery()` — délai clippé entre -30 et +30
 - `build_features()` — aucun NaN, une ligne par client, log1p positif
-
----
 
 #### `tests/test_predict.py`
 **Rôle :** Tests unitaires pour `src/models/predict.py`.
@@ -632,8 +603,6 @@ le modèle KMeans et le StandardScaler sans charger MLflow.
 `mock_kmeans.predict.return_value = np.array([0])` → retourne
 toujours le cluster 0, quelle que soit l'entrée.
 
----
-
 ### Configuration
 
 #### `requirements.txt`
@@ -645,8 +614,6 @@ qualité de code, tests.
 pip install -r requirements.txt
 ```
 
----
-
 #### `setup.py`
 Rend le dossier `src/` installable comme un package Python.
 Sans ce fichier, `from src.data.load_data import load_olist`
@@ -656,22 +623,16 @@ Sans ce fichier, `from src.data.load_data import load_olist`
 pip install -e .   # installe src/ en mode editable
 ```
 
----
-
 #### `pyproject.toml`
 Configuration centralisée des outils de qualité de code :
 - `[tool.black]` — formatage automatique, max 88 caractères par ligne
 - `[tool.pytest.ini_options]` — dossier de tests, pattern de fichiers
-
----
 
 #### `.flake8`
 Configuration de Flake8 (linter PEP8) :
 - `max-line-length = 88` — aligné sur Black
 - `extend-ignore = E501` — délègue la longueur de ligne à Black
 - `exclude` — ignore venv/, notebooks/, .git/
-
----
 
 #### `Dockerfile`
 Image Docker pour l'API FastAPI.
@@ -687,8 +648,6 @@ EXPOSE 8000                # port exposé
 CMD ["uvicorn", ...]       # commande de démarrage
 ```
 
----
-
 #### `docker-compose.yml`
 Orchestre deux services qui se voient sur un réseau Docker interne :
 - **api** — FastAPI sur le port 8000
@@ -696,8 +655,6 @@ Orchestre deux services qui se voient sur un réseau Docker interne :
 
 Les `volumes` montent les dossiers locaux dans les containers pour
 que les données et les runs MLflow persistent sur votre disque.
-
----
 
 #### `dvc.yaml`
 Définit le pipeline reproductible DVC :
@@ -718,8 +675,6 @@ stages:
 dvc repro   # exécute le pipeline, ne rejoue que les étapes modifiées
 ```
 
----
-
 #### `params.yaml`
 Paramètres du pipeline DVC, modifiables sans toucher au code :
 
@@ -731,8 +686,6 @@ train:
 ```
 
 Pour tester K=5 : modifier `n_clusters: 5` puis `dvc repro`.
-
----
 
 #### `.github/workflows/ci.yml`
 Pipeline CI/CD GitHub Actions exécuté à chaque `git push` :
@@ -747,8 +700,6 @@ Pipeline CI/CD GitHub Actions exécuté à chaque `git push` :
 Si une étape échoue, le badge CI/CD passe au rouge et le push
 est marqué comme défaillant.
 
----
-
 #### `dashboard/index.html`
 Interface web pour l'équipe marketing.
 
@@ -760,8 +711,6 @@ Deux onglets :
 4 profils types pré-chargés pour tester rapidement chaque segment.
 
 **Prérequis :** uvicorn doit tourner sur localhost:8000.
-
----
 
 ## Pipeline MLOps — ordre d'exécution
 
@@ -1089,6 +1038,26 @@ mlflow ui --port 5000
 # 4. Mettre à jour le dashboard et l'API (redémarrer uvicorn)
 # 5. Documenter les changements dans le README
 ```
+---
+
+## Stack technique
+
+| Catégorie | Technologie | Version | Rôle |
+|---|---|---|---|
+| Langage | Python | 3.13 | Langage principal |
+| ML & Clustering | scikit-learn | 1.4+ | K-Means, StandardScaler, métriques |
+| Feature engineering | NumPy + Pandas | 1.26 / 2.2 | Calcul RFM, transformations |
+| Visualisation | Matplotlib + Seaborn | 3.8 / 0.13 | Graphiques EDA et clustering |
+| Tracking expériences | MLflow | 2.14 | Logging paramètres, métriques, artefacts |
+| Versioning données | DVC | 3.55 | Versioning CSV et modèles .pkl |
+| API REST | FastAPI + Uvicorn | 0.111 / 0.29 | Endpoint de prédiction |
+| Validation données | Pydantic | 2.7 | Validation des requêtes API |
+| Tests unitaires | Pytest + pytest-cov | 8.2 / 5.0 | 49 tests, couverture 100% logique |
+| Qualité de code | Black + Flake8 + isort | 24.4 / 7.0 / 5.13 | Formatage PEP8 automatique |
+| CI/CD | GitHub Actions | — | Pipeline automatisé à chaque push |
+| Containerisation | Docker + Compose | 29.3 / 5.1 | Reproductibilité totale |
+| Interface marketing | HTML + CSS + JS | — | Dashboard sans framework |
+| Notebooks | Jupyter | — | EDA, modélisation, simulation |
 
 ---
 
