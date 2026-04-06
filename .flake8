@@ -8,4 +8,5 @@ exclude =
     .dvc
 extend-ignore =
     E203,
-    E501
+    E501,
+    E402
