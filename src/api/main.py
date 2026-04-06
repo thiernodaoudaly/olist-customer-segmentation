@@ -25,6 +25,9 @@ from src.models.predict import (
     predict_segment,
 )
 
+from fastapi.middleware.cors import CORSMiddleware
+
+
 # ── Modèles Pydantic ──────────────────────────────────────────────────────────
 
 
@@ -152,8 +155,6 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
 )
-
-from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
     CORSMiddleware,
