@@ -1063,8 +1063,8 @@ mlflow ui --port 5000
 
 ## Auteurs
 
-- **THIERNO DAOUDA LY**
-- **BABACAR NIANG**
-- **MOUHAMED SARR**
+- **Thierno Daouda LY**
+- **Babacar NIANG**
+- **Mouhamed SARR**
 
 Projet réalisé dans le cadre du cours MLOps — 2026.
