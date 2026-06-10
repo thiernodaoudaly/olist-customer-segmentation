@@ -21,8 +21,6 @@
 
 </div>
 
----
-
 ## Table des matières
 
 1. [Contexte business](#contexte-business)
@@ -39,9 +37,7 @@
 12. [API FastAPI](#api-fastapi)
 13. [Dashboard marketing](#dashboard-marketing)
 14. [Contrat de maintenance](#contrat-de-maintenance)
-15. [Auteur](#auteur)
-
----
+15. [Auteurs](#auteurs)
 
 ## Contexte business
 
@@ -69,8 +65,6 @@ des campagnes ciblées et mesurables.
 | 1 | Clients dormants | 33% | Réactivation |
 | 2 | Clients insatisfaits | 15% | Récupération |
 | 3 | VIP multi-acheteurs | 3% | Programme VIP |
-
----
 
 ## Architecture du projet
 
@@ -110,8 +104,6 @@ des campagnes ciblées et mesurables.
 └─────────────────────────────────────────────────────────┘
 ```
 
----
-
 ## Dataset Olist
 
 Les données comprennent l'historique des commandes de 2016 à 2018,
@@ -143,8 +135,6 @@ par Olist sous licence CC BY-NC-SA 4.0 et disponibles sur Kaggle.
 - **92% des livraisons** arrivent en avance (moyenne -12 jours)
 - **Montant moyen par commande :** 159 BRL (médiane : 105 BRL)
 
----
-
 ## Installation pas à pas
 
 ### Prérequis système
@@ -158,28 +148,26 @@ docker --version       # >= 24.0
 docker compose version # >= 2.0
 ```
 
-### Étape 1 — Cloner le repository
+### Étape 1 : Cloner le repository
 
 ```bash
-git clone https://github.com/thiernodaoudaly/olist-customer-segmentation.git
+git clone https://github.com/tchernodawda/olist-customer-segmentation.git
 cd olist-customer-segmentation
 ```
 
-### Étape 2 — Créer l'environnement virtuel Python
+### Étape 2 : Créer l'environnement virtuel Python
 
 ```bash
 # Windows
 py -3.13 -m venv venv
 venv\Scripts\activate
 
-# Linux / macOS
+# Linux ou macOS
 python3.13 -m venv venv
 source venv/bin/activate
 ```
 
-Votre prompt doit afficher `(venv)` au début.
-
-### Étape 3 — Installer les dépendances
+### Étape 3 : Installer les dépendances
 
 ```bash
 # Mise à jour pip en premier
@@ -188,12 +176,11 @@ python -m pip install --upgrade pip
 # Installation de toutes les dépendances
 pip install -r requirements.txt
 
-# Installation du package src/ en mode editable
-# Permet d'importer src.data, src.features, etc. dans les notebooks
+# Installation du package src/ en mode editable : permet d'importer src.data, src.features, etc. dans les notebooks
 pip install -e .
 ```
 
-### Étape 4 — Vérifier l'installation
+### Étape 4 : Vérifier l'installation
 
 ```bash
 python scripts/check_env.py
@@ -201,7 +188,7 @@ python scripts/check_env.py
 
 Résultat attendu : tous les packages marqués OK.
 
-### Étape 5 — Télécharger le dataset Olist
+### Étape 5 : Télécharger le dataset Olist
 
 Téléchargez le dataset depuis Kaggle :
 https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce
@@ -221,7 +208,7 @@ data/raw/
 └── product_category_name_translation.csv
 ```
 
-### Étape 6 — Initialiser DVC
+### Étape 6 : Initialiser DVC
 
 DVC (Data Version Control) versionne les fichiers de données
 trop lourds pour Git (CSV, modèles .pkl).
@@ -233,35 +220,32 @@ git add data/raw.dvc data/.gitignore .dvc/ .dvcignore
 git commit -m "data: ajout dataset Olist via DVC"
 ```
 
-### Étape 7 — Lancer le pipeline d'entraînement
+### Étape 7 : Lancer le pipeline d'entraînement
 
 ```bash
 python src/models/train.py
 ```
 
-Ce script exécute tout le pipeline en une commande :
-chargement → features → scaling → K-Means → MLflow logging.
+Ce script exécute tout le pipeline en une commande : chargement → features → scaling → K-Means → MLflow logging.
 
-### Étape 8 — Lancer l'API
+### Étape 8 : Lancer l'API
 
 ```bash
-# Terminal 1 — API FastAPI
+# Terminal 1 pour API FastAPI
 uvicorn src.api.main:app --reload --port 8000
 
-# Terminal 2 — Interface MLflow (optionnel)
+# Terminal 2 pour Interface MLflow (optionnel)
 mlflow ui --port 5000
 ```
 
-### Étape 9 — Ouvrir le dashboard marketing
+### Étape 9 : Ouvrir le dashboard marketing
 
 Ouvrez `dashboard/index.html` dans votre navigateur.
 L'API doit tourner sur localhost:8000 pour que le dashboard fonctionne.
 
----
-
 ## Lancement de l'environnement
 
-### Option A — Avec Docker (recommandé pour la production)
+### Option A : avec Docker (recommandé pour la production)
 
 Docker garantit la reproductibilité totale.
 
@@ -282,7 +266,7 @@ Pour arrêter :
 docker-compose down
 ```
 
-### Option B — Sans Docker (développement local)
+### Option B : sans Docker (développement local)
 
 ```bash
 # Activer le venv
@@ -296,16 +280,13 @@ uvicorn src.api.main:app --reload --port 8000
 mlflow ui --port 5000
 ```
 
-### Option C — Reproduire le pipeline avec DVC
+### Option C : reproduire le pipeline avec DVC
 
-DVC garantit que le pipeline est exécuté dans le bon ordre
-et ne rejoue que les étapes modifiées.
+DVC garantit que le pipeline est exécuté dans le bon ordre et ne rejoue que les étapes modifiées.
 
 ```bash
 dvc repro
 ```
-
----
 
 ## Description de chaque fichier
 
@@ -380,11 +361,11 @@ jupyter notebook notebooks/segmentation_03_simulation.ipynb
 
 Ce module fournit deux fonctions :
 
-- `load_olist(data_dir)` — charge les 5 tables nécessaires dans un
-  dictionnaire `{nom_table: DataFrame}`. Lève une `FileNotFoundError`
+- `load_olist(data_dir)` charge les 5 tables nécessaires dans un
+  dictionnaire `{nom_table: DataFrame}`, lève une `FileNotFoundError`
   explicite si un fichier manque, avec le lien Kaggle pour télécharger.
 
-- `get_merged_dataset(data_dir)` — charge et merge toutes les tables
+- `get_merged_dataset(data_dir)` charge et merge toutes les tables
   en un seul DataFrame via des LEFT JOIN sur `order_id` et `customer_id`.
 
 **Pourquoi `customer_unique_id` et pas `customer_id` ?**
@@ -405,7 +386,7 @@ customers = dfs["customers"] # 99 441 lignes × 5 colonnes
 **Rôle :** Construction des features RFM enrichies.
 
 Ce module contient une fonction par feature (principe de responsabilité
-unique — chaque fonction est testable indépendamment) :
+unique : chaque fonction est testable indépendamment) :
 
 | Fonction | Feature produite | Transformation |
 |---|---|---|
@@ -447,20 +428,20 @@ Ce script exécute le pipeline complet en une commande :
 Il accepte des arguments CLI pour être paramétrable :
 
 ```bash
-# Entraînement par défaut (K=4)
+# entraînement par défaut (K=4)
 python src/models/train.py
 
-# Avec paramètres personnalisés
+# avec paramètres personnalisés
 python src/models/train.py --n-clusters 5 --run-name mon_run
 
-# Avec dossier de données différent
+# avec dossier de données différent
 python src/models/train.py --data-dir data/raw --random-state 0
 ```
 
 **Ce qu'il sauvegarde :**
-- `data/processed/rfm_features.csv` — features de tous les clients
-- `models/kmeans_model.pkl` — modèle K-Means sérialisé
-- `models/scaler.pkl` — StandardScaler sérialisé
+- `data/processed/rfm_features.csv` : features de tous les clients
+- `models/kmeans_model.pkl` : modèle K-Means sérialisé
+- `models/scaler.pkl` : StandardScaler sérialisé
 - Run MLflow avec paramètres, métriques et artefacts
 
 #### `src/models/predict.py`
@@ -582,11 +563,11 @@ Cela garantit des tests rapides (< 1s) et indépendants du filesystem.
 **Rôle :** Tests unitaires pour `src/features/build_features.py`.
 
 21 tests qui vérifient chaque fonction individuellement :
-- `compute_recency()` — récence basée sur la DERNIÈRE commande
-- `compute_frequency()` — client avec 2 commandes → frequency=2
-- `compute_monetary()` — montant inclut les frais de port
-- `compute_delivery()` — délai clippé entre -30 et +30
-- `build_features()` — aucun NaN, une ligne par client, log1p positif
+- `compute_recency()` : récence basée sur la DERNIÈRE commande
+- `compute_frequency()` : client avec 2 commandes → frequency=2
+- `compute_monetary()` : montant inclut les frais de port
+- `compute_delivery()` : délai clippé entre -30 et +30
+- `build_features()` : aucun NaN, une ligne par client, log1p positif
 
 #### `tests/test_predict.py`
 **Rôle :** Tests unitaires pour `src/models/predict.py`.
@@ -607,8 +588,7 @@ toujours le cluster 0, quelle que soit l'entrée.
 
 #### `requirements.txt`
 Liste de toutes les dépendances Python avec leurs versions minimales.
-Organisé par catégorie : données, visualisation, ML, MLOps, API,
-qualité de code, tests.
+Organisé par catégorie : données, visualisation, ML, MLOps, API, qualité de code, tests.
 
 ```bash
 pip install -r requirements.txt
@@ -625,14 +605,14 @@ pip install -e .   # installe src/ en mode editable
 
 #### `pyproject.toml`
 Configuration centralisée des outils de qualité de code :
-- `[tool.black]` — formatage automatique, max 88 caractères par ligne
-- `[tool.pytest.ini_options]` — dossier de tests, pattern de fichiers
+- `[tool.black]` : formatage automatique, max 88 caractères par ligne
+- `[tool.pytest.ini_options]` : dossier de tests, pattern de fichiers
 
 #### `.flake8`
 Configuration de Flake8 (linter PEP8) :
-- `max-line-length = 88` — aligné sur Black
-- `extend-ignore = E501` — délègue la longueur de ligne à Black
-- `exclude` — ignore venv/, notebooks/, .git/
+- `max-line-length = 88` : aligné sur Black
+- `extend-ignore = E501` : délègue la longueur de ligne à Black
+- `exclude` : ignore venv/, notebooks/, .git/
 
 #### `Dockerfile`
 Image Docker pour l'API FastAPI.
@@ -693,26 +673,25 @@ Pipeline CI/CD GitHub Actions exécuté à chaque `git push` :
 1. Checkout du code
 2. Installation Python 3.13
 3. Installation des dépendances
-4. Black — vérifie le formatage
-5. Flake8 — vérifie les règles PEP8
-6. Pytest — exécute les 49 tests avec couverture
+4. Black vérifie le formatage
+5. Flake8 vérifie les règles PEP8
+6. Pytest exécute les 49 tests avec couverture
 
-Si une étape échoue, le badge CI/CD passe au rouge et le push
-est marqué comme défaillant.
+Si une étape échoue, le badge CI/CD passe au rouge et le push est marqué comme défaillant.
 
 #### `dashboard/index.html`
 Interface web pour l'équipe marketing.
 
 Deux onglets :
-- **Segments** — affiche les 4 segments chargés depuis l'API GET /segments
-- **Prédire un client** — formulaire de saisie des features + appel
+- **Segments** affiche les 4 segments chargés depuis l'API GET /segments
+- **Prédire un client** : formulaire de saisie des features + appel
   POST /predict + affichage du résultat avec couleur par segment
 
 4 profils types pré-chargés pour tester rapidement chaque segment.
 
 **Prérequis :** uvicorn doit tourner sur localhost:8000.
 
-## Pipeline MLOps — ordre d'exécution
+## Pipeline MLOps : ordre d'exécution
 
 Voici l'ordre exact pour reproduire le projet de zéro :
 
@@ -775,8 +754,6 @@ git commit -m "feat: pipeline complet"
 git push   # → GitHub Actions exécute les tests automatiquement
 ```
 
----
-
 ## Résultats
 
 ### Comparaison des modèles K-Means (K=2 à K=10)
@@ -809,8 +786,6 @@ Elbow, avec 4 profils clients distincts et actionnables.
 | `review_score_mean` | order_reviews | Médiane pour NaN | Score 1-5, bimodal |
 | `delivery_delay_mean` | orders — réel vs estimé | clip(-30, 30) | Outliers extrêmes |
 
----
-
 ## Segmentation clients
 
 ### Profils des 4 segments
@@ -824,21 +799,21 @@ Elbow, avec 4 profils clients distincts et actionnables.
 
 ### Stratégies marketing par segment
 
-**Segment 0 — Nouveaux satisfaits (49%)**
+**Segment 0 : Nouveaux satisfaits (49%)**
 Ces clients ont commandé récemment (135 jours), sont très satisfaits
 (4.66/5) mais n'ont commandé qu'une seule fois. C'est le segment
 le plus large et le plus facile à convertir en clients fidèles.
 **Stratégie :** programme de fidélisation, offre exclusive pour
 le 2ème achat, email de suivi personnalisé.
 
-**Segment 1 — Clients dormants (33%)**
+**Segment 1 : Clients dormants (33%)**
 Ces clients n'ont pas commandé depuis plus d'un an (404 jours)
 mais étaient satisfaits lors de leur dernier achat (4.58/5).
 Ils ont un fort potentiel de réactivation.
 **Stratégie :** campagne "Vous nous manquez", offre de retour
 avec réduction, mise en avant des nouveautés depuis leur départ.
 
-**Segment 2 — Clients insatisfaits (15%)**
+**Segment 2 : Clients insatisfaits (15%)**
 Ces clients ont un score de satisfaction de seulement 1.60/5,
 malgré des livraisons globalement correctes (-3.7 jours vs -12 jours
 pour les autres segments). Le problème vient du produit lui-même,
@@ -847,14 +822,12 @@ pas de la logistique.
 ciblé (remboursement partiel, bon d'achat), amélioration
 de la qualité des produits concernés.
 
-**Segment 3 — VIP multi-acheteurs (3%)**
+**Segment 3 : VIP multi-acheteurs (3%)**
 Seuls 3% des clients mais les plus précieux : 2.11 commandes
 en moyenne, 309 BRL de montant total (2x la moyenne),
 satisfaction correcte (4.21/5).
 **Stratégie :** programme VIP exclusif, accès anticipé aux
 nouveautés, service client prioritaire, invitations événements.
-
----
 
 ## Tests unitaires
 
@@ -897,8 +870,6 @@ pytest tests/ -v --cov=src --cov-report=html
 # Rapport HTML dans htmlcov/index.html
 ```
 
----
-
 ## CI/CD GitHub Actions
 
 Le pipeline `.github/workflows/ci.yml` s'exécute automatiquement
@@ -916,18 +887,14 @@ Le pipeline `.github/workflows/ci.yml` s'exécute automatiquement
 7. upload-artifact               Archive le rapport de couverture
 ```
 
-Si une étape échoue → badge rouge + notification.
-Si tout passe → badge vert.
-
----
+Si une étape échoue → badge rouge + notification. Si tout passe → badge vert.
 
 ## API FastAPI
 
 ### Endpoints
 
 #### `GET /`
-Health check — vérifie que l'API est opérationnelle et que
-le modèle est chargé.
+Health check — vérifie que l'API est opérationnelle et que le modèle est chargé.
 
 ```json
 {
@@ -978,8 +945,6 @@ Prédit le segment d'un client à partir de ses features comportementales.
 
 **Documentation interactive :** http://localhost:8000/docs
 
----
-
 ## Dashboard marketing
 
 Interface web `dashboard/index.html` permettant à l'équipe marketing
@@ -998,8 +963,6 @@ résultat affiché avec badge coloré par segment.
 uvicorn src.api.main:app --reload --port 8000
 # Puis ouvrir dashboard/index.html dans le navigateur
 ```
-
----
 
 ## Contrat de maintenance
 
@@ -1038,7 +1001,6 @@ mlflow ui --port 5000
 # 4. Mettre à jour le dashboard et l'API (redémarrer uvicorn)
 # 5. Documenter les changements dans le README
 ```
----
 
 ## Stack technique
 
@@ -1059,12 +1021,10 @@ mlflow ui --port 5000
 | Interface marketing | HTML + CSS + JS | — | Dashboard sans framework |
 | Notebooks | Jupyter | — | EDA, modélisation, simulation |
 
----
-
 ## Auteurs
 
 - **THIERNO DAOUDA LY**
 - **BABACAR NIANG**
 - **MOUHAMED SARR**
 
-Projet réalisé dans le cadre du cours MLOps — 2026.
+Projet réalisé dans le cadre du cours MLOps 2026.
