@@ -65,5 +65,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/thiernodaoudaly/olist-customer-segmentation:latest
-            ghcr.io/thiernodaoudaly/olist-customer-segmentation:v1.0.0
+            ghcr.io/tchernodawda/olist-customer-segmentation:latest
+            ghcr.io/tchernodawda/olist-customer-segmentation:v1.0.0

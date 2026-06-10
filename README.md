@@ -17,7 +17,7 @@
 ![Coverage](https://img.shields.io/badge/Coverage-100%25%20logic-brightgreen)
 ![Segments](https://img.shields.io/badge/Segments-4-blue)
 ![Clients](https://img.shields.io/badge/Clients-93%20358-blue)
-![CI/CD](https://github.com/thiernodaoudaly/olist-customer-segmentation/actions/workflows/ci.yml/badge.svg)
+![CI/CD](https://github.com/tchernodawda/olist-customer-segmentation/actions/workflows/ci.yml/badge.svg)
 
 </div>
 
