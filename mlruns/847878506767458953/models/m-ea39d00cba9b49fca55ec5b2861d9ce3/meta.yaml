@@ -1,0 +1,10 @@
+artifact_location: file:c:/Users/stg_ly84525/Desktop/olist-customer-segmentation/mlruns/847878506767458953/models/m-ea39d00cba9b49fca55ec5b2861d9ce3/artifacts
+creation_timestamp: 1781106526411
+experiment_id: '847878506767458953'
+last_updated_timestamp: 1781106533357
+model_id: m-ea39d00cba9b49fca55ec5b2861d9ce3
+model_type: ''
+name: scaler
+source_run_id: ec62816dfb60444ebe05b733b980e2a5
+status: 2
+status_message: null

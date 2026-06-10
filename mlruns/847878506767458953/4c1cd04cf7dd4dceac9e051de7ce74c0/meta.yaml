@@ -1,0 +1,14 @@
+artifact_uri: file:c:/Users/stg_ly84525/Desktop/olist-customer-segmentation/mlruns/847878506767458953/4c1cd04cf7dd4dceac9e051de7ce74c0/artifacts
+end_time: 1781104456171
+entry_point_name: ''
+experiment_id: '847878506767458953'
+lifecycle_stage: active
+run_id: 4c1cd04cf7dd4dceac9e051de7ce74c0
+run_name: kmeans_k4
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1781104306633
+status: 3
+tags: []
+user_id: stg_ly84525

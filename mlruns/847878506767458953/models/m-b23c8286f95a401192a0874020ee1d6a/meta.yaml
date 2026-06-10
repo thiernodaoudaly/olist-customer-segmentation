@@ -1,0 +1,10 @@
+artifact_location: file:c:/Users/stg_ly84525/Desktop/olist-customer-segmentation/mlruns/847878506767458953/models/m-b23c8286f95a401192a0874020ee1d6a/artifacts
+creation_timestamp: 1781105446432
+experiment_id: '847878506767458953'
+last_updated_timestamp: 1781105453112
+model_id: m-b23c8286f95a401192a0874020ee1d6a
+model_type: ''
+name: model
+source_run_id: 51cdde302ca0476ab7040ad8d61905bb
+status: 2
+status_message: null

@@ -1,0 +1,23 @@
+artifact_path: file:c:/Users/stg_ly84525/Desktop/olist-customer-segmentation/mlruns/847878506767458953/models/m-4a993d50355842729b0d15655af24e9d/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.13.9
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.8.0
+    skops_trusted_types: null
+mlflow_version: 3.10.1
+model_id: m-4a993d50355842729b0d15655af24e9d
+model_size_bytes: 374455
+model_uuid: m-4a993d50355842729b0d15655af24e9d
+prompts: null
+run_id: 30cf710f09e147edbb7ecc9a8b0b2c29
+utc_time_created: '2026-06-10 15:19:21.520894'
