@@ -1,7 +1,7 @@
-# Olist Customer Segmentation
+# Segmentation des clients Olist
 
 <p align="center">
-  <img src="assets/images/olist_logo.png" alt="Olist Logo" width="300"/>
+  <img src="assets/images/olistlogo.svg" alt="Olist Logo" width="300"/>
 </p>
 
 > Segmentation non supervisée des clients d'Olist afin de permettre
